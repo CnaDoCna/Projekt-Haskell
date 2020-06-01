@@ -1,1 +1,1 @@
-# Projekt-Haskell
+# szachy
