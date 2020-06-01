@@ -23,7 +23,7 @@ move board@(Board fs) = do
         fieldOld = Field past Empty
     if checkMove board fieldNew fieldOld == False
       then do
-           putStrLn "Move forbidden"
+           putStrLn "\nMove forbidden. Try again!\n"
            move board
     else
        let boardNew = updateField board fieldNew fieldOld

@@ -74,14 +74,19 @@ initialBoard = Board (map (\(c,p) -> Field c p) $ zip boardCoords initPositions)
 
 
 drawBoard :: Board -> String
-drawBoard b@(Board fs) = (concat $ digitLabel $ map (\x -> intercalate " | " x ++ "\n    -------------------------------\n") strings) ++ "\n" ++ letterLabel
+drawBoard b = (concat $ digitLabel $ map (\x -> intercalate " | " x ++ "\n    -------------------------------\n") strings) ++ "\n" ++ letterLabel
     where
-        strings = map (map show) $
-                  map (map piece) $
-                  chunksOf 8 fs
+        strings = map (map show) $ sortFields b
         letterLabel = "     " ++ (intercalate "   " $ map (\x -> [x]) $ ['a'..'h'])
         digitLabel s = [(show (n+1)) ++ "    " ++ x | n <- [0..7], x <- [s!!n]]
 
+
+sortFields :: Board -> [[Piece]]
+sortFields (Board fs) =
+  map (map piece) $
+  map (sortBy (\x y -> compare (coords x !! 1) (coords y  !! 1))) $
+  chunksOf 8 $
+  sortBy (\x y -> compare (coords x !! 0) (coords y  !! 0)) fs
 
 
 --sprawdza jaki typ pionka przesunal gracz
