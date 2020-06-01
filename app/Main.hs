@@ -2,10 +2,11 @@ module Main where
 
 import Board
 import Checker
+import Debug.Trace (traceShowId)
 
 main :: IO ()
 main = do
-    putStrLn "Chess Game"
+    putStrLn "Chess Game\n"
     let board = initialBoard
         in move board
 
@@ -16,8 +17,8 @@ move board@(Board fs) = do
     pastRaw <- getLine
     putStrLn "Place a piece on:"
     presentRaw <- getLine
-    let present = read present :: [Char]
-        past = read past :: [Char]
+    let present = read presentRaw :: [Char]
+        past = read pastRaw :: [Char]
         fieldNew = Field present (movedPieceType fs past)
         fieldOld = Field past Empty
     if checkMove board fieldNew fieldOld == False

@@ -14,24 +14,23 @@ import Data.List       (sortBy, intercalate)
 import Data.List.Split (chunksOf)
 import Test.QuickCheck
 import Data.Functor
-
+import Debug.Trace (traceShowId)
 
 
 data PColor = White | Black
-   deriving(Read, Eq)
+   deriving(Show, Read, Eq)
 data PType = King | Queen | Rook | Bishop | Knight | Pawn
-   deriving(Read, Eq)
+   deriving(Show, Read, Eq)
 data Piece = Piece PColor PType | Empty
-   deriving(Read, Eq)
+  -- deriving(Show, Read, Eq)
 
 data Field =
     Field { coords :: [Char], piece :: Piece }
-    deriving(Show, Read, Eq)
-
+  --  deriving(Show, Read, Eq)
 
 data Board =
     Board { fields :: [Field] }
-    deriving(Show, Read, Eq)
+--    deriving(Show, Read, Eq)
 
 --type Positioned = Maybe Piece
 
@@ -64,20 +63,18 @@ initialBoard = Board (map (\(c,p) -> Field c p) $ zip boardCoords initPositions)
                                  Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
                                  Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn,
                                  Piece White Rook, Piece White Knight, Piece White Bishop, Piece White King, Piece White Queen, Piece White Bishop, Piece White Knight, Piece White Rook]
-                boardCoords = ["8a", "8b", "8c", "8d", "8e", "8f", "8g", "8h",
-                               "7a", "7b", "7c", "7d", "7e", "7f", "7g", "7h",
-                               "6a", "6b", "6c", "6d", "6e", "6f", "6g", "6h",
-                               "5a", "5b", "5c", "5d", "5e", "5f", "5g", "5h",
-                               "4a", "4b", "4c", "4d", "4e", "4f", "4g", "4h",
-                               "3a", "3b", "3c", "3d", "3e", "3f", "3g", "3h",
-                               "2a", "2b", "2c", "2d", "2e", "2f", "2g", "2h",
-                               "1a", "1b", "1c", "1d", "1e", "1f", "1g", "1h"]
-
-
+                boardCoords   = ["1a", "1b", "1c", "1d", "1e", "1f", "1g", "1h",
+                                 "2a", "2b", "2c", "2d", "2e", "2f", "2g", "2h",
+                                 "3a", "3b", "3c", "3d", "3e", "3f", "3g", "3h",
+                                 "4a", "4b", "4c", "4d", "4e", "4f", "4g", "4h",
+                                 "5a", "5b", "5c", "5d", "5e", "5f", "5g", "5h",
+                                 "6a", "6b", "6c", "6d", "6e", "6f", "6g", "6h",
+                                 "7a", "7b", "7c", "7d", "7e", "7f", "7g", "7h",
+                                 "8a", "8b", "8c", "8d", "8e", "8f", "8g", "8h"]
 
 
 drawBoard :: Board -> String
-drawBoard b@(Board fs) = (concat $ digitLabel $ map (\x -> intercalate " | " x ++ "\n    --------------------------------\n") strings) ++ "\n" ++ letterLabel
+drawBoard b@(Board fs) = (concat $ digitLabel $ map (\x -> intercalate " | " x ++ "\n    -------------------------------\n") strings) ++ "\n" ++ letterLabel
     where
         strings = map (map show) $
                   map (map piece) $
@@ -89,8 +86,9 @@ drawBoard b@(Board fs) = (concat $ digitLabel $ map (\x -> intercalate " | " x +
 
 --sprawdza jaki typ pionka przesunal gracz
 movedPieceType :: [Field] -> [Char] -> Piece
+movedPieceType [] _ = Empty
 movedPieceType (f:fs) p
-  | coords f == p = piece f
+  | coords f == p = traceShowId (piece f)
   | otherwise = movedPieceType fs p
 
 
