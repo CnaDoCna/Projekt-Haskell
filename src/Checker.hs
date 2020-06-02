@@ -32,5 +32,12 @@ qChecker b@(Board fs) cn co@(coy:cox:[])
  | otherwise = False
   where
     allowedFields = [[y, cox] | y <- ['1'..'8'], [y, x] /= co, y < '9', y > '0', x < 'i'] ++
-                    [[coy, x] | y <- ['a'..'b'], [y, x] /= co, y < '9', y > '0', x < 'i'] ++
+                    [[coy, x] | y <- ['a'..'b'], [y, x] /= co, y < '9', y > '0', x < 'i'] ++ -- czy tu nie powinno byc | x <- ['a'..'h']?
                     [[y, x] | (y, x) <- (zip ['a'..'b'], [y, x] /= co, y < '9', y > '0', x < 'i']-}
+ {-
+ pChecker :: Board -> [Char] -> [Char] -> Bool
+ pChecker b@(Board fs) cn co@(coy:cox:[])
+ | cn `elem` (traceShowId allowedFields) = True
+ | otherwise = False
+  where
+    allowedFields = [[y, x] | y <- [succ coy], x <- cox, [y, x] /= co, y < '9', y > '0', x < 'i']-}
