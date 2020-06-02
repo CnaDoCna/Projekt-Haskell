@@ -7,7 +7,7 @@ module Board
     , drawBoard
     , initialBoard
     , updateField
-    , movedPieceType
+    , movedPiece
     ) where
 
 import Data.List       (sortBy, intercalate)
@@ -90,11 +90,11 @@ sortFields (Board fs) =
 
 
 --sprawdza jaki typ pionka przesunal gracz
-movedPieceType :: [Field] -> [Char] -> Piece
-movedPieceType [] _ = Empty
-movedPieceType (f:fs) p
-  | coords f == p = traceShowId (piece f)
-  | otherwise = movedPieceType fs p
+movedPiece :: [Field] -> [Char] -> Piece
+movedPiece [] _ = Empty
+movedPiece (f:fs) p
+  | coords f == p = piece f
+  | otherwise = movedPiece fs p
 
 
 updateField :: Board -> Field -> Field -> Board

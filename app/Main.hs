@@ -6,25 +6,33 @@ import Debug.Trace (traceShowId)
 
 main :: IO ()
 main = do
-    putStrLn "Chess Game\n"
+    putStrLn "\nChess Game\n\nTo enter a move, type <DL>, \nwhere D is a digit coordinate \nand L is a letter coordinate.\n To quit the game type <q> anytime.\n"
     let board = initialBoard
-        in move board
+        player = "White"
+        in move board player
 
-move :: Board -> IO ()
-move board@(Board fs) = do
+move :: Board -> [Char] -> IO ()
+move board@(Board fs) player = do
     putStrLn $ drawBoard board
-    putStrLn "\nTake a piece from:"
+    putStrLn ("\n" ++ player ++ " pieces' turn.")
+    putStrLn "Take a piece from:"
     pastRaw <- getLine
     putStrLn "Place a piece on:"
     presentRaw <- getLine
-    let present = read presentRaw :: [Char]
-        past = read pastRaw :: [Char]
-        fieldNew = Field present (movedPieceType fs past)
+    let present = presentRaw
+        past = pastRaw
+        fieldNew = Field present (movedPiece fs past)
         fieldOld = Field past Empty
-    if checkMove board fieldNew fieldOld == False
-      then do
-           putStrLn "\nMove forbidden. Try again!\n"
-           move board
+    if present == "q"
+      then return()
     else
-       let boardNew = updateField board fieldNew fieldOld
-           in move boardNew
+        if checkMove board fieldNew fieldOld == False
+          then do
+               putStrLn "\nMove forbidden. Try again!\n"
+               move board player
+        else
+           let boardNew = updateField board fieldNew fieldOld
+               in move boardNew (nextPlayer player)
+
+nextPlayer :: [Char] -> [Char]
+nextPlayer current = if current == "White" then "Black" else "White"
