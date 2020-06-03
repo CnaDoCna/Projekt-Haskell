@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4a3c230ab9a00c514edd1d0a489a2afd1c28aeabb75742565a4e607ba9da1c23
+-- hash: 2f1ae7cf4c31e09c8c4cf46d45d3256c86f272812e888dc6d770378141ee4543
 
 name:           szachy
 version:        0.1.0.0
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       Board
+      Capturer
       Checker
   other-modules:
       Paths_szachy

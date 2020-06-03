@@ -6,8 +6,9 @@ module Board
     , PColor (..)
     , drawBoard
     , initialBoard
-    , updateField
-    , movedPiece
+    , updateFields
+    , whatPiece
+    , nextPlayer
     ) where
 
 import Data.List       (sortBy, intercalate)
@@ -21,8 +22,8 @@ data PColor = White | Black
    deriving(Show, Read, Eq)
 data PType = King | Queen | Rook | Bishop | Knight | Pawn
    deriving(Show, Read, Eq)
-data Piece = Piece PColor PType | Empty
-  -- deriving(Show, Read, Eq)
+data Piece = Piece { colorof :: PColor, typeof :: PType } | Empty
+  deriving(Eq)
 
 data Field =
     Field { coords :: [Char], piece :: Piece }
@@ -31,8 +32,6 @@ data Field =
 data Board =
     Board { fields :: [Field] }
 --    deriving(Show, Read, Eq)
-
---type Positioned = Maybe Piece
 
 
 instance Show Piece where
@@ -74,7 +73,7 @@ initialBoard = Board (map (\(c,p) -> Field c p) $ zip boardCoords initPositions)
 
 
 drawBoard :: Board -> String
-drawBoard b = (concat $ digitLabel $ map (\x -> intercalate " | " x ++ "\n    -------------------------------\n") strings) ++ "\n" ++ letterLabel
+drawBoard b = "\n\n" ++ (concat $ digitLabel $ map (\x -> intercalate " | " x ++ "\n    -------------------------------\n") strings) ++ "\n" ++ letterLabel
     where
         strings = map (map show) $ sortFields b
         letterLabel = "     " ++ (intercalate "   " $ map (\x -> [x]) $ ['a'..'h'])
@@ -89,17 +88,21 @@ sortFields (Board fs) =
   sortBy (\x y -> compare (coords x !! 0) (coords y  !! 0)) fs
 
 
---sprawdza jaki typ pionka przesunal gracz
-movedPiece :: [Field] -> [Char] -> Piece
-movedPiece [] _ = Empty
-movedPiece (f:fs) p
+--zwraca pionek który stoi na podancych koordynatach na podanej tablicy
+whatPiece :: [Field] -> [Char] -> Piece
+whatPiece [] _ = Empty
+whatPiece (f:fs) p
   | coords f == p = piece f
-  | otherwise = movedPiece fs p
+  | otherwise = whatPiece fs p
 
 
-updateField :: Board -> Field -> Field -> Board
-updateField b@(Board fs) fn@(Field cn _) fo@(Field co _)
+updateFields :: Board -> Field -> Field -> Board
+updateFields b@(Board fs) fn@(Field cn _) fo@(Field co _)
     | any ((\x -> coords x == cn)) fs = Board newFields
     | otherwise = b
     where
         newFields = fo : fn : [ x | x <- fs, coords x /= cn, coords x /= co ]
+
+
+nextPlayer :: PColor -> PColor
+nextPlayer current = if current == White then Black else White

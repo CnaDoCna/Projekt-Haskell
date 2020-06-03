@@ -2,37 +2,44 @@ module Main where
 
 import Board
 import Checker
+import Capturer
 import Debug.Trace (traceShowId)
 
 main :: IO ()
 main = do
-    putStrLn "\nChess Game\n\nTo enter a move, type <DL>, \nwhere D is a digit coordinate \nand L is a letter coordinate.\n To quit the game type <q> anytime.\n"
+    putStrLn "\n\nChess Game\n\nTo enter a move, type <DL>, \nwhere D is a digit coordinate \nand L is a letter coordinate. \nTo quit the game type <q> anytime.\n\nUppercase = Whites \nLowercase = Blacks \n\n"
     let board = initialBoard
-        player = "White"
-        in move board player
+        player = White
+        capturesWhite = []
+        capturesBlack = []
+        in move board player capturesWhite capturesBlack
 
-move :: Board -> [Char] -> IO ()
-move board@(Board fs) player = do
+move :: Board -> PColor -> [Char] -> [Char]-> IO ()
+move board@(Board fs) player capturesWhite capturesBlack = do
     putStrLn $ drawBoard board
-    putStrLn ("\n" ++ player ++ " pieces' turn.")
+    putStrLn ("\n" ++ (show player) ++ " pieces' turn.")
     putStrLn "Take a piece from:"
-    pastRaw <- getLine
-    putStrLn "Place a piece on:"
-    presentRaw <- getLine
-    let present = presentRaw
-        past = pastRaw
-        fieldNew = Field present (movedPiece fs past)
-        fieldOld = Field past Empty
-    if present == "q"
+    fstPosition <- getLine
+    if fstPosition == "q"
       then return()
-    else
-        if checkMove board fieldNew fieldOld == False
-          then do
-               putStrLn "\nMove forbidden. Try again!\n"
-               move board player
-        else
-           let boardNew = updateField board fieldNew fieldOld
-               in move boardNew (nextPlayer player)
+    else do
+      putStrLn "Place a piece on:"
+      sndPosition <- getLine
 
-nextPlayer :: [Char] -> [Char]
-nextPlayer current = if current == "White" then "Black" else "White"
+      let fstPiece = whatPiece fs fstPosition
+          sndPiece = whatPiece fs sndPosition
+          fstField = Field fstPosition fstPiece -- pole z ktorego zostal zabrany pionek
+          sndField = Field sndPosition sndPiece -- pole na którym zostal postawiony pionek na przeszłej tablicy
+          newFstField = Field fstPosition Empty -- pole z ktorego zostal zabrany pionek - zwracam jego nową zawartosc -empty
+          newSndField = Field sndPosition fstPiece -- pole na którym zostal postawiony pionek na przeszłej tablicy - zwracam jego nową zawartość
+      if checkMove board fstField sndField player == False
+        then do
+             putStrLn "\nForbidden move, forbidden piece or wrong input. \nTry again!\n"
+             move board player capturesWhite capturesBlack
+      else do
+         if checkCapture board fstPiece sndPiece capturesWhite capturesBlack == True
+             then putStrLn ("\nMove successful!\n" ++ (show fstPiece) ++ " captures " ++ (show sndPiece) ++ "!\n")
+         else putStrLn ("\nMove successful!\n")
+
+         let boardNew = updateFields board newFstField newSndField
+             in move boardNew (nextPlayer player) capturesWhite capturesBlack

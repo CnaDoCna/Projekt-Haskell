@@ -6,76 +6,89 @@ import Board
 import Data.List.Split
 import Debug.Trace (traceShowId)
 
-checkMove :: Board -> Field -> Field -> Bool
-checkMove _ fn@(Field _ Empty) _ = False
-checkMove b fn@(Field cn (Piece k t)) fo@(Field co _) =
-    case t of
-      King -> kChecker b cn co
-      Queen -> qChecker b cn co
-      Rook -> rChecker b cn co
-      Bishop -> bChecker b cn co
-      Knight -> nChecker b cn co
-      Pawn -> pChecker b cn co k
+checkMove :: Board -> Field -> Field -> PColor -> Bool
+checkMove _ ff@(Field _ Empty) _ _ = False
+--checkMove b ff@(Field fc movedPiece@(Piece fk ft)) sf@(Field sc Empty) player = checkMove b ff@(Field fc movedPiece) sf@(Field sc movedPiece) player
+checkMove b ff@(Field fc movedPiece@(Piece fk ft)) sf@(Field sc _) player =
+  if (fk /= player) then False -- gracz nie moze przesunąc pionka przeciwnika ani postawic pionka na polu zajetym przez swoj pionek
+  else
+    case ft of
+     King -> kingChecker b fc sc
+     Queen -> queenChecker b fc sc
+     Rook -> rookChecker b fc sc
+     Bishop -> bishopChecker b fc sc
+     Knight -> knightChecker b fc sc
+     Pawn -> pawnChecker b fc sc fk
 
 
--- jezeli ten sam pionek co sprawdzany stoi w miejscu dozwolonym do ruchu na starej planszy to jest to przesza pozycja pionka - musi zniknac
-kChecker :: Board -> [Char] -> [Char] -> Bool
-kChecker b@(Board fs) cn co@[coy,cox]
-  | cn `elem` (traceShowId allowedFields) = True
+kingChecker :: Board -> [Char] ->  [Char] -> Bool
+kingChecker b@(Board fs) fc@[fcy,fcx] sc
+  | sc `elem` allowedFields  = True
   | otherwise = False
    where
-     allowedFields = [[y, x] | y <- [pred coy..succ coy], x <- [pred cox..succ cox], [y, x] /= co, y < '9', y > '0', x < 'i', x <= 'a']
+     allowedFields = [[y, x] | y <- [pred fcy..succ fcy], x <- [pred fcx..succ fcx], [y, x] /= fc, y < '9', y > '0', x < 'i', x <= 'a']
 
 
-qChecker :: Board -> [Char] -> [Char] -> Bool
-qChecker b@(Board fs) cn co@[coy,cox]
- | cn `elem` (traceShowId allowedFields) = True
+queenChecker :: Board -> [Char] -> [Char] -> Bool
+queenChecker b@(Board fs) fc@[fcy,fcx] sc
+ | sc `elem` allowedFields = True
  | otherwise = False
   where
-    allowedFields = [[y, cox] | y <- ['1'..'8'], [y, cox] /= co, y < '9', y > '0'] ++
-                    [[coy, x] | x <- ['a'..'h'], [coy, x] /= co, x < 'i', x <= 'a'] ++
-                    [[y, x] | (y, x) <- (zip [coy..] [cox..]), [y, x] /= co, y < '9', y > '0', x < 'i', x <= 'a'] ++
-                    [[y, x] | (y, x) <- (zip [coy..] [cox..]), [y, x] /= co, y < '9', y > '0', x < 'i', x <= 'a'] ++
-                    [[y, x] | (y, x) <- (zip [coy, pred coy..] [cox, pred cox..]), y < '9', y > '0', x < 'i', x <= 'a'] ++
-                    [[y, x] | (y, x) <- (zip [coy, pred coy..] [cox..]), y < '9', y > '0', x < 'i', x <= 'a'] ++
-                    [[y, x] | (y, x) <- (zip [coy..] [cox, pred cox..]), y < '9', y > '0', x < 'i', x <= 'a']
+    allowedFields = (emptyPaths fs [[y, fcx] | y <- [fcy, pred fcy..'1'], [y, fcx] /= fc, y < '9', y > '0'] [[]]) ++
+                    (emptyPaths fs [[y, fcx] | y <- [fcy..'8'], [y, fcx] /= fc, y < '9', y > '0'] [[]]) ++
+                    (emptyPaths fs [[fcy, x] | x <- [fcx, pred fcx..'a'], [fcy, x] /= fc, x < 'i', x <= 'a'] [[]]) ++
+                    (emptyPaths fs [[fcy, x] | x <- [fcx..'h'], [fcy, x] /= fc, x < 'i', x <= 'a'] [[]]) ++
+                    (emptyPaths fs [[y, x] | (y, x) <- (zip [fcy..] [fcx..]), [y, x] /= fc, y < '9', y > '0', x < 'i', x <= 'a'] [[]]) ++
+                    (emptyPaths fs [[y, x] | (y, x) <- (zip [fcy, pred fcy..] [fcx, pred fcx..]), y < '9', y > '0', x < 'i', x <= 'a'] [[]]) ++
+                    (emptyPaths fs [[y, x] | (y, x) <- (zip [fcy, pred fcy..] [fcx..]), y < '9', y > '0', x < 'i', x <= 'a'] [[]]) ++
+                    (emptyPaths fs [[y, x] | (y, x) <- (zip [fcy..] [fcx, pred fcx..]), y < '9', y > '0', x < 'i', x <= 'a'] [[]])
 
 
-rChecker ::  Board -> [Char] -> [Char] -> Bool
-rChecker b@(Board fs) cn co@[coy,cox]
- | cn `elem` (traceShowId allowedFields) = True
+rookChecker ::  Board -> [Char] -> [Char] -> Bool
+rookChecker b@(Board fs) fc@[fcy,fcx] sc
+ | sc `elem` allowedFields = True
  | otherwise = False
   where
-    allowedFields = [[y, cox] | y <- ['1'..'8'], [y, cox] /= co, y < '9', y > '0'] ++
-                    [[coy, x] | x <- ['a'..'h'], [coy, x] /= co, x < 'i', x <= 'a']
+    allowedFields = (emptyPaths fs [[y, fcx] | y <- [fcy, pred fcy..'1'], [y, fcx] /= fc, y < '9', y > '0'] [[]]) ++
+                    (emptyPaths fs [[y, fcx] | y <- [fcy..'8'], [y, fcx] /= fc, y < '9', y > '0'] [[]]) ++
+                    (emptyPaths fs [[fcy, x] | x <- [fcx, pred fcx..'a'], [fcy, x] /= fc, x < 'i', x <= 'a'] [[]]) ++
+                    (emptyPaths fs [[fcy, x] | x <- [fcx..'h'], [fcy, x] /= fc, x < 'i', x <= 'a'] [[]])
 
 
-bChecker :: Board -> [Char] -> [Char] -> Bool
-bChecker b@(Board fs) cn co@[coy,cox]
- | cn `elem` allowedFields = True
+bishopChecker :: Board -> [Char] -> [Char] -> Bool
+bishopChecker b@(Board fs) fc@[fcy,fcx] sc
+ | sc `elem` allowedFields = True
  | otherwise = False
   where
-    allowedFields = (traceShowId [[y, x] | (y, x) <- (zip [coy..] [cox..]), [y, x] /= co, y < '9', y > '0', x < 'i', x >= 'a']) ++
-                    (traceShowId [[y, x] | (y, x) <- (zip [coy..] [cox..]), [y, x] /= co, y < '9', y > '0', x < 'i', x >= 'a']) ++
-                    (traceShowId [[y, x] | (y, x) <- (zip [coy, pred coy..] [cox, pred cox..]), y < '9', y > '0', x < 'i', x >= 'a']) ++
-                    (traceShowId [[y, x] | (y, x) <- (zip [coy, pred coy..] [cox..]), y < '9', y > '0', x < 'i', x >= 'a']) ++
-                    (traceShowId [[y, x] | (y, x) <- (zip [coy..] [cox, pred cox..]), y < '9', y > '0', x < 'i', x >= 'a'])
+    allowedFields = (emptyPaths fs [[y, x] | (y, x) <- (zip [fcy..] [fcx..]), [y, x] /= fc, y < '9', y > '0', x < 'i', x <= 'a'] [[]]) ++
+                    (emptyPaths fs [[y, x] | (y, x) <- (zip [fcy, pred fcy..] [fcx, pred fcx..]), y < '9', y > '0', x < 'i', x <= 'a'] [[]]) ++
+                    (emptyPaths fs [[y, x] | (y, x) <- (zip [fcy, pred fcy..] [fcx..]), y < '9', y > '0', x < 'i', x <= 'a'] [[]]) ++
+                    (emptyPaths fs [[y, x] | (y, x) <- (zip [fcy..] [fcx, pred fcx..]), y < '9', y > '0', x < 'i', x <= 'a'] [[]])
 
 
-nChecker :: Board -> [Char] -> [Char] -> Bool
-nChecker b@(Board fs) cn co@[coy,cox]
- | cn `elem` (traceShowId allowedFields) = True
+
+knightChecker :: Board -> [Char] -> [Char] -> Bool
+knightChecker b@(Board fs) fc@[fcy,fcx] sc
+ | sc `elem` allowedFields = True
  | otherwise = False
   where
-    allowedFields = [[y, x] | x <- [pred(pred cox),succ(succ cox)], y <- [pred coy,succ coy], y < '9', y > '0', x < 'i', x <= 'a'] ++
-                    [[y, x] | x <- [pred cox,succ cox], y <- [pred(pred coy),succ(succ coy)], y < '9', y > '0', x < 'i', x <= 'a']
+    allowedFields = [[y, x] | x <- [pred(pred fcx),succ(succ fcx)], y <- [pred fcy,succ fcy], y < '9', y > '0', x < 'i', x <= 'a'] ++
+                    [[y, x] | x <- [pred fcx,succ fcx], y <- [pred(pred fcy),succ(succ fcy)], y < '9', y > '0', x < 'i', x <= 'a']
 
 
-pChecker :: Board -> [Char] -> [Char] -> PColor -> Bool
-pChecker b@(Board fs) cn co@[coy,cox] k
- | cn `elem` (traceShowId allowedFieldsW) && k == White = True
- | cn `elem` (traceShowId allowedFieldsB) && k == Black = True
+pawnChecker :: Board -> [Char] -> [Char] -> PColor -> Bool
+pawnChecker b@(Board fs) fc@[fcy,fcx] sc k
+ | sc `elem` allowedFieldsW && k == White = True
+ | sc `elem` allowedFieldsB && k == Black = True
  | otherwise = False
   where
-    allowedFieldsW = [[y, cox] | y <- [pred coy], y < '9', y > '0']
-    allowedFieldsB = [[y, cox] | y <- [succ coy], y < '9', y > '0']
+    allowedFieldsW = [[y, fcx] | y <- [pred fcy], y < '9', y > '0']
+    allowedFieldsB = [[y, fcx] | y <- [succ fcy], y < '9', y > '0']
+
+
+
+emptyPaths :: [Field] -> [[Char]] -> [[Char]] -> [[Char]]
+emptyPaths fs [] new = new
+emptyPaths fs (c:cs) new =
+ if (whatPiece fs c) /= Empty then new
+ else emptyPaths fs cs (c : new)
