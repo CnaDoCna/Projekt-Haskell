@@ -7,13 +7,13 @@ C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\szachy.cabal:
   size: 1595
   modtime: 1591191052
 C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\src\Board.hs:
-  hash: caed2113f88d416417d8537ede195e9f1d27bcb5f631eb200b519ff4acbe58f9
-  size: 4373
-  modtime: 1591210947
+  hash: 3f55446dec923f9d0251c442dd0d82651e4dd8c2092ddf534eec11661b5558d6
+  size: 4933
+  modtime: 1591288603
 C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\src\Capturer.hs:
-  hash: cbd7e494739762791be23b3dc2a985e1e21ed78be5f41193602dff5ab8bd498a
-  size: 445
-  modtime: 1591197413
+  hash: 41adea67f69249ce7647f25fbbad6c22f701c786dcd19f215cc30c63236ee61a
+  size: 473
+  modtime: 1591286426
 C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\README.md:
   hash: 1e4bffbb47f965f4ce8341a04d735a98e97506b119de53a06c71f5f05bc0a421
   size: 10
@@ -23,6 +23,6 @@ C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\ChangeLog.md:
   size: 49
   modtime: 1591032035
 C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\src\Checker.hs:
-  hash: 57ee1177b3b907f61cd4373d55ff2606bfec75c1a3cfdc678d2bdaafd2a864f3
-  size: 4637
-  modtime: 1591211009
+  hash: bc60d46aed44927fd73bc4fab01f1066cde728d625e7fcc9221802591dd38919
+  size: 5435
+  modtime: 1591295737

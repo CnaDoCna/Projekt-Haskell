@@ -17,12 +17,12 @@ import Test.QuickCheck
 import Data.Functor
 import Debug.Trace (traceShowId)
 
-
-data PColor = White | Black | Empty
+-- nie dodaję Empty bo mi nie pasuje w pattermatchingu
+data PColor = White | Black | NoColor
    deriving(Show, Read, Eq)
-data PType = King | Queen | Rook | Bishop | Knight | Pawn | Empty
+data PType = King | Queen | Rook | Bishop | Knight | Pawn | NoType
    deriving(Show, Read, Eq)
-data Piece = Piece { colorof :: PColor, typeof :: PType }
+data Piece = Piece { colorof :: PColor, typeof :: PType}
   deriving(Eq)
 
 data Field =
@@ -56,10 +56,10 @@ initialBoard :: Board
 initialBoard = Board (map (\(c,p) -> Field c p) $ zip boardCoords initPositions)
           where initPositions = [Piece Black Rook, Piece Black Knight, Piece Black Bishop, Piece Black Queen, Piece Black King, Piece Black Bishop, Piece Black Knight, Piece Black Rook,
                                  Piece Black Pawn, Piece Black Pawn, Piece Black Pawn, Piece Black Pawn, Piece Black Pawn, Piece Black Pawn, Piece Black Pawn, Piece Black Pawn,
-                                 Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty,
-                                 Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty,
-                                 Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty,
-                                 Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty,
+                                 Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType,
+                                 Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType,
+                                 Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType,
+                                 Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType,
                                  Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn,
                                  Piece White Rook, Piece White Knight, Piece White Bishop, Piece White King, Piece White Queen, Piece White Bishop, Piece White Knight, Piece White Rook]
                 boardCoords   = ["1a", "1b", "1c", "1d", "1e", "1f", "1g", "1h",
@@ -90,7 +90,7 @@ sortFields (Board fs) =
 
 --zwraca pionek który stoi na podancych koordynatach na podanej tablicy
 whatPiece :: [Field] -> [Char] -> Piece
-whatPiece [] _ = Empty
+whatPiece [] _ = Piece NoColor NoType
 whatPiece (f:fs) p
   | coords f == p = piece f
   | otherwise = whatPiece fs p
