@@ -18,11 +18,11 @@ import Data.Functor
 import Debug.Trace (traceShowId)
 
 
-data PColor = White | Black
+data PColor = White | Black | Empty
    deriving(Show, Read, Eq)
-data PType = King | Queen | Rook | Bishop | Knight | Pawn
+data PType = King | Queen | Rook | Bishop | Knight | Pawn | Empty
    deriving(Show, Read, Eq)
-data Piece = Piece { colorof :: PColor, typeof :: PType } | Empty
+data Piece = Piece { colorof :: PColor, typeof :: PType }
   deriving(Eq)
 
 data Field =
@@ -56,10 +56,10 @@ initialBoard :: Board
 initialBoard = Board (map (\(c,p) -> Field c p) $ zip boardCoords initPositions)
           where initPositions = [Piece Black Rook, Piece Black Knight, Piece Black Bishop, Piece Black Queen, Piece Black King, Piece Black Bishop, Piece Black Knight, Piece Black Rook,
                                  Piece Black Pawn, Piece Black Pawn, Piece Black Pawn, Piece Black Pawn, Piece Black Pawn, Piece Black Pawn, Piece Black Pawn, Piece Black Pawn,
-                                 Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                                 Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                                 Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
-                                 Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+                                 Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty,
+                                 Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty,
+                                 Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty,
+                                 Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty, Piece Empty Empty,
                                  Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn,
                                  Piece White Rook, Piece White Knight, Piece White Bishop, Piece White King, Piece White Queen, Piece White Bishop, Piece White Knight, Piece White Rook]
                 boardCoords   = ["1a", "1b", "1c", "1d", "1e", "1f", "1g", "1h",
