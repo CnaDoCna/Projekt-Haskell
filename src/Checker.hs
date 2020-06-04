@@ -6,11 +6,10 @@ import Board
 import Data.List.Split
 import Debug.Trace (traceShowId)
 
-checkMove :: Board -> Field -> Field -> PColor -> Bool
-checkMove _ ff@(Field _ Empty) _ _ = False
---checkMove b ff@(Field fc movedPiece@(Piece fk ft)) sf@(Field sc Empty) player = checkMove b ff@(Field fc movedPiece) sf@(Field sc movedPiece) player
-checkMove b ff@(Field fc movedPiece@(Piece fk ft)) sf@(Field sc _) player =
-  if (fk /= player) then False -- gracz nie moze przesunąc pionka przeciwnika ani postawic pionka na polu zajetym przez swoj pionek
+checkMove :: Board -> [Char] -> [Char] -> Piece -> Piece -> PColor -> Bool
+checkMove _ _ Empty _ _ = False
+checkMove b fc sc fp@(Piece fk ft) sp@(Piece sk st) player =
+  if (fk /= player || sk == fk) then False -- gracz nie moze przesunąc pionka przeciwnika ani postawic pionka na polu zajetym przez swoj pionek
   else
     case ft of
      King -> kingChecker b fc sc
@@ -86,9 +85,9 @@ pawnChecker b@(Board fs) fc@[fcy,fcx] sc k
     allowedFieldsB = [[y, fcx] | y <- [succ fcy], y < '9', y > '0']
 
 
-
+--dla queen rook i bishop sprawdza czy dozwolone pola sa takze puste - nie moga przeskakiwac innych pionkow
 emptyPaths :: [Field] -> [[Char]] -> [[Char]] -> [[Char]]
 emptyPaths fs [] new = new
 emptyPaths fs (c:cs) new =
- if (whatPiece fs c) /= Empty then new
+ if (whatPiece fs c) /= Empty then (c : new)
  else emptyPaths fs cs (c : new)
