@@ -28,11 +28,9 @@ move board@(Board fs) player capturesWhite capturesBlack = do
 
       let fstPiece = whatPiece fs fstPosition
           sndPiece = whatPiece fs sndPosition
-          fstField = Field fstPosition fstPiece -- pole z ktorego zostal zabrany pionek
-          sndField = Field sndPosition sndPiece -- pole na którym zostal postawiony pionek na przeszłej tablicy
           newFstField = Field fstPosition Empty -- pole z ktorego zostal zabrany pionek - zwracam jego nową zawartosc -empty
           newSndField = Field sndPosition fstPiece -- pole na którym zostal postawiony pionek na przeszłej tablicy - zwracam jego nową zawartość
-      if checkMove board fstField sndField player == False
+      if checkMove board fstPiece sndPiece fstPosition sndPosition player == False
         then do
              putStrLn "\nForbidden move, forbidden piece or wrong input. \nTry again!\n"
              move board player capturesWhite capturesBlack
