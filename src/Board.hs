@@ -8,30 +8,25 @@ module Board
     , initialBoard
     , updateFields
     , whatPiece
-    , nextPlayer
+    , otherPlayer
     ) where
 
 import Data.List       (sortBy, intercalate)
 import Data.List.Split (chunksOf)
 import Test.QuickCheck
 import Data.Functor
-import Debug.Trace (traceShowId)
 
 -- nie dodaję Empty bo mi nie pasuje w pattermatchingu
 data PColor = White | Black | NoColor
-   deriving(Show, Read, Eq)
+   deriving(Show, Eq)
 data PType = King | Queen | Rook | Bishop | Knight | Pawn | NoType
-   deriving(Show, Read, Eq)
+   deriving(Show, Eq)
 data Piece = Piece { colorof :: PColor, typeof :: PType}
   deriving(Eq)
 
-data Field =
-    Field { coords :: [Char], piece :: Piece }
-  --  deriving(Show, Read, Eq)
+data Field = Field { coords :: [Char], piece :: Piece }
 
-data Board =
-    Board { fields :: [Field] }
---    deriving(Show, Read, Eq)
+data Board = Board { fields :: [Field] }
 
 
 instance Show Piece where
@@ -83,26 +78,26 @@ drawBoard b = "\n\n" ++ (concat $ digitLabel $ map (\x -> intercalate " | " x ++
 sortFields :: Board -> [[Piece]]
 sortFields (Board fs) =
   map (map piece) $
-  map (sortBy (\x y -> compare (coords x !! 1) (coords y  !! 1))) $
+  map (sortBy (\x y -> compare (last $ coords x) (last $ coords y))) $
   chunksOf 8 $
-  sortBy (\x y -> compare (coords x !! 0) (coords y  !! 0)) fs
+  sortBy (\x y -> compare (head $ coords x) (head $ coords y)) fs
 
 
 --zwraca pionek który stoi na podancych koordynatach na podanej tablicy
 whatPiece :: [Field] -> [Char] -> Piece
 whatPiece [] _ = Piece NoColor NoType
-whatPiece (f:fs) p
-  | coords f == p = piece f
-  | otherwise = whatPiece fs p
+whatPiece (f:fs) c
+  | coords f == c = piece f
+  | otherwise = whatPiece fs c
 
 
 updateFields :: Board -> Field -> Field -> Board
-updateFields b@(Board fs) fn@(Field cn _) fo@(Field co _)
-    | any ((\x -> coords x == cn)) fs = Board newFields
+updateFields b@(Board fs) ff@(Field fc _) sf@(Field sc _)
+    | any ((\x -> coords x == fc)) fs = Board newFields
     | otherwise = b
     where
-        newFields = fo : fn : [ x | x <- fs, coords x /= cn, coords x /= co ]
+        newFields = sf : ff : [ x | x <- fs, coords x /= fc, coords x /= sc ]
 
 
-nextPlayer :: PColor -> PColor
-nextPlayer current = if current == White then Black else White
+otherPlayer :: PColor -> PColor
+otherPlayer current = if current == White then Black else White
