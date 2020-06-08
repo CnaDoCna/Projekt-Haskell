@@ -1,13 +1,45 @@
+{-|
+Module      : Checker
+Description : Implements chess rules.
+Copyright   : (c) Zuzanna Boruczkowska, 2020
+              Marta Koczerska, 2020
+              Małgorzata Orłowska, 2020
+License      : GPL-3
+Maintainer   : zuzbor5@st.amu.edu.pl
+Stability    : stable
+Portability  : POSTX
+-}
+
 module Checker
     ( checkMove
+    , kingChecker
+    , queenChecker
+    , rookChecker
+    , bishopChecker
+    , knightChecker
+    , pawnChecker
+    , emptyPath
+    , emptyField
+    , opponentsPiece
     ) where
 
 import Board
 import Data.List.Split
 
+-- | [@checkMove@] Takes a board, starting field coordinates, target field coordinates,
+-- current starting field Piece, current target field Piece and current players' color.
+--
+-- Returns False when:
+--
+--     * color of starting Piece is different from players' (player can't move opponents' piece)
+--     * color of starting Piece is the same as target Piece (player can't capture own piece)
+--     * starting coordinates are the same as target coordinates (player can't stand in a place in a loop)
+--     * type of the staring Piece is other then available (Piece is non existing)
+--
+-- | Returns True when Piece types' legality checkers returns True.
 checkMove :: Board -> [Char] -> [Char] -> Piece -> Piece -> PColor -> Bool
 checkMove b fc sc fp@(Piece fk ft) sp@(Piece sk st) player =
-  if (fk /= player || sk == fk || sc == fc) then False -- gracz nie moze przesunąc pionka przeciwnika ani postawic pionka na polu zajetym przez swoj pionek
+  if (fk /= player || sk == fk || sc == fc) then False
   else
     case ft of
      King -> kingChecker b fc sc
@@ -17,7 +49,6 @@ checkMove b fc sc fp@(Piece fk ft) sp@(Piece sk st) player =
      Knight -> knightChecker b fc sc
      Pawn -> pawnChecker b fc sc player
      _ -> False
-
 
 
 kingChecker :: Board -> [Char] ->  [Char] -> Bool
@@ -90,21 +121,34 @@ pawnChecker b@(Board fs) fc@[fcy,fcx] sc k =
                     (opponentsPiece fs [[y, x] | y <- [succ fcy], x <- [pred fcx], y >= '1', y <= '8', x <= 'h', x >= 'a', [y, x] /= fc] k)
 
 
---dla queen rook i bishop sprawdza czy dozwolone pola sa takze puste - plus kończą się jednym pionkiem
+-- | [@emptyPath@] Out of a list of legal moves' coordinates, creates a path of unoccupied coordines,
+-- starting from the starting coordinate to a first encountered occupied coordinate.
+-- Adds the coordinate to the list, as it can be occupied by a Piece to capture.
+-- Used by Queen, Rook and Bishop Piece type.
+--
+-- >>> emptyPath ["6b", "6c", "6d", "6e", "6f"]
+-- ["6b", "6c", "6d"]
 emptyPath :: [Field] -> [[Char]] -> [[Char]] -> [[Char]]
 emptyPath fs [] new = new
 emptyPath fs (c:cs) new =
  if (whatPiece fs c) /= (Piece NoColor NoType) then (c : new) else emptyPath fs cs (c : new)
   where
 
---dla pawn sprawdza czy pola zawierają pionek przeciwnika do zbicia
+-- | [@opponentsPiece@] Out of a list of moves' coordinates,
+-- checks if coordinates can exist as legal,
+-- by being occupied by an opponents' piece.
+--
+-- Used by Pawn Piece type.
 opponentsPiece :: [Field] -> [[Char]] -> PColor -> [[Char]]
 opponentsPiece fs [] k = []
 opponentsPiece fs (c:cs) k =
   if colorof (whatPiece fs c) == (otherPlayer k) then (c:cs) else cs
 
-
+-- | [@emptyField@] Out of a list of moves' coordinates,
+-- checks if coordinates can exist as legal, by being unoccupied.
+--
+-- Used by Pawn Piece type.
 emptyField :: [Field] -> [[Char]] -> [[Char]]
 emptyField fs [] = []
-emptyField fs (c:cs) =
-  if (whatPiece fs c) == (Piece NoColor NoType) then (c:cs) else cs
+emptyField fs (c:[]) =
+  if (whatPiece fs c) == (Piece NoColor NoType) then (c:[]) else []

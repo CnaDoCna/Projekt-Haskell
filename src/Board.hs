@@ -1,3 +1,15 @@
+{-|
+Module      : Board
+Description : Implements actions, layout and content of the chess board.
+Copyright   : (c) Zuzanna Boruczkowska, 2020
+              Marta Koczerska, 2020
+              Małgorzata Orłowska, 2020
+License      : GPL-3
+Maintainer   : zuzbor5@st.amu.edu.pl
+Stability    : stable
+Portability  : POSTX
+-}
+
 module Board
     ( Piece (..)
     , Field (..)
@@ -7,6 +19,7 @@ module Board
     , drawBoard
     , initialBoard
     , updateFields
+    , sortFields
     , whatPiece
     , otherPlayer
     ) where
@@ -16,11 +29,11 @@ import Data.List.Split (chunksOf)
 import Test.QuickCheck
 import Data.Functor
 
--- nie dodaję Empty bo mi nie pasuje w pattermatchingu
 data PColor = White | Black | NoColor
    deriving(Show, Eq)
 data PType = King | Queen | Rook | Bishop | Knight | Pawn | NoType
    deriving(Show, Eq)
+-- | Piece NoColor NoType is a Void Piece. I needed it to have color and type so it can match in functions' pattermatching : ).
 data Piece = Piece { colorof :: PColor, typeof :: PType}
   deriving(Eq)
 
@@ -82,8 +95,9 @@ sortFields (Board fs) =
   chunksOf 8 $
   sortBy (\x y -> compare (head $ coords x) (head $ coords y)) fs
 
-
---zwraca pionek który stoi na podancych koordynatach na podanej tablicy
+-- | [@whatPiece@] Takes a list of a board fields, and coordinates,
+-- then iterates the fields' list in search for the exact coordinates.
+-- Returns the Piece data of the coordinate.
 whatPiece :: [Field] -> [Char] -> Piece
 whatPiece [] _ = Piece NoColor NoType
 whatPiece (f:fs) c

@@ -1,8 +1,11 @@
-module Main where
+
+module Main
+ where
 
 import Board
 import Checker
 import Data.List.Split (chunksOf)
+
 
 main :: IO ()
 main = do
@@ -10,6 +13,7 @@ main = do
     let board = initialBoard
         player = White
         in move board player
+
 
 move :: Board -> PColor -> IO ()
 move board@(Board fs) player = do
@@ -34,7 +38,7 @@ move board@(Board fs) player = do
              (show $ colorof fstPiece) ++ " " ++ (show $ typeof fstPiece) ++ " captures " ++ (show $ colorof sndPiece) ++ " " ++ (show $ typeof sndPiece) ++ "!\n")
          else putStrLn ("\nMove successful!\n")
 
-         let newFstField = Field fstPosition (Piece NoColor NoType) -- pole z ktorego zostal zabrany pionek - zwracam jego nową zawartosc
-             newSndField = Field sndPosition fstPiece -- pole na którym zostal postawiony pionek na przeszłej tablicy - zwracam jego nową zawartość
+         let newFstField = Field fstPosition (Piece NoColor NoType)
+             newSndField = Field sndPosition fstPiece
              boardNew = updateFields board newFstField newSndField
              in move boardNew (otherPlayer player)
