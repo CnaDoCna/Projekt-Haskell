@@ -9,7 +9,7 @@ import Data.List.Split (chunksOf)
 
 main :: IO ()
 main = do
-    putStrLn "\n\nChess Game\n\nTo enter a move, type <DLDL>, \nwhere D is a digit coordinate, \nL is a letter coordinate\nand first is starting DL, second is target DL. \nTo quit the game type <q> anytime.\n\nUppercase = White \nLowercase = Black \n\n"
+    putStrLn "\n\nChess Game\n\nTo enter a move, type <DLDL>, \nwhere D is a digit coordinate, \nL is a letter coordinate\nand first is starting DL, second is target DL. \nTo quit the game anytime press Enter without typing. \n\nUppercase = White \nLowercase = Black \n\n"
     let board = initialBoard
         player = White
         in move board player
@@ -21,7 +21,7 @@ move board@(Board fs) player = do
     putStrLn ("\n" ++ (show player) ++ " pieces' turn.")
     putStrLn "Make a move: "
     input <- getLine
-    if input == "q"
+    if input == ""
       then return()
     else do
       let fstPosition = head $ chunksOf 2 input

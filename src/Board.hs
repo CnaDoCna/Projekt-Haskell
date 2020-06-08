@@ -27,19 +27,45 @@ module Board
 import Data.List       (sortBy, intercalate)
 import Data.List.Split (chunksOf)
 import Test.QuickCheck
-import Data.Functor
 
 data PColor = White | Black | NoColor
    deriving(Show, Eq)
+
+instance Arbitrary PColor where
+    arbitrary = elements [White, Black, NoColor]
+
 data PType = King | Queen | Rook | Bishop | Knight | Pawn | NoType
    deriving(Show, Eq)
--- | Piece NoColor NoType is a Void Piece. I needed it to have color and type so it can match in functions' pattermatching : ).
+-- | Piece NoColor NoType is a Void Piece. I needed it to have color and type so it can match in functions' pattermatching!
+instance Arbitrary PType where
+     arbitrary = elements [King, Queen, Rook, Bishop, Knight, Pawn, NoType]
+
 data Piece = Piece { colorof :: PColor, typeof :: PType}
   deriving(Eq)
 
+instance Arbitrary Piece where
+    arbitrary = do
+      c <- arbitrary
+      t <- arbitrary
+      return $ Piece c t
+
 data Field = Field { coords :: [Char], piece :: Piece }
+   deriving(Show)
+
+instance Arbitrary Field where
+     arbitrary = do
+         x <- elements ['1'..'8']
+         y <- elements ['a'..'h']
+         p <- arbitrary
+         return $ Field [x,y] p
 
 data Board = Board { fields :: [Field] }
+   deriving(Show)
+
+instance Arbitrary Board where
+     arbitrary = do
+         ps <- vectorOf 64 arbitrary
+         return $ Board (map (\(p, [a,b]) -> Field [a,b] p) $ zip ps [[x,y] | x <- ['1'..'8'], y <- ['a'..'h']])
 
 
 instance Show Piece where
@@ -70,14 +96,7 @@ initialBoard = Board (map (\(c,p) -> Field c p) $ zip boardCoords initPositions)
                                  Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType, Piece NoColor NoType,
                                  Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn, Piece White Pawn,
                                  Piece White Rook, Piece White Knight, Piece White Bishop, Piece White King, Piece White Queen, Piece White Bishop, Piece White Knight, Piece White Rook]
-                boardCoords   = ["1a", "1b", "1c", "1d", "1e", "1f", "1g", "1h",
-                                 "2a", "2b", "2c", "2d", "2e", "2f", "2g", "2h",
-                                 "3a", "3b", "3c", "3d", "3e", "3f", "3g", "3h",
-                                 "4a", "4b", "4c", "4d", "4e", "4f", "4g", "4h",
-                                 "5a", "5b", "5c", "5d", "5e", "5f", "5g", "5h",
-                                 "6a", "6b", "6c", "6d", "6e", "6f", "6g", "6h",
-                                 "7a", "7b", "7c", "7d", "7e", "7f", "7g", "7h",
-                                 "8a", "8b", "8c", "8d", "8e", "8f", "8g", "8h"]
+                boardCoords   = [[x,y] | x <- ['1'..'8'], y <- ['a'..'h']]
 
 
 drawBoard :: Board -> String
@@ -107,7 +126,7 @@ whatPiece (f:fs) c
 
 updateFields :: Board -> Field -> Field -> Board
 updateFields b@(Board fs) ff@(Field fc _) sf@(Field sc _)
-    | any ((\x -> coords x == fc)) fs = Board newFields
+    | any ((\x -> coords x == fc)) fs && fc /= sc = Board newFields
     | otherwise = b
     where
         newFields = sf : ff : [ x | x <- fs, coords x /= fc, coords x /= sc ]
