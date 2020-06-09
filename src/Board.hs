@@ -100,7 +100,7 @@ initialBoard = Board (map (\(c,p) -> Field c p) $ zip boardCoords initPositions)
 
 
 drawBoard :: Board -> String
-drawBoard b = "\n\n" ++ (concat $ digitLabel $ map (\x -> intercalate " | " x ++ "\n    -------------------------------\n") strings) ++ "\n" ++ letterLabel
+drawBoard b = "\n" ++ (concat $ digitLabel $ map (\x -> intercalate " | " x ++ "\n    -------------------------------\n") strings) ++ "\n" ++ letterLabel
     where
         strings = map (map show) $ sortFields b
         letterLabel = "     " ++ (intercalate "   " $ map (\x -> [x]) $ ['a'..'h'])

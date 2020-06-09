@@ -19,8 +19,9 @@ module Checker
     , knightChecker
     , pawnChecker
     , emptyPath
-    , emptyField
+    , emptyFields
     , opponentsPiece
+    , allowDoubleMove
     ) where
 
 import Board
@@ -113,12 +114,14 @@ pawnChecker b@(Board fs) fc@[fcy,fcx] sc k =
    Black -> if sc `elem` allowedFieldsB then True else False
    _ -> False
  where
-   allowedFieldsW = (emptyField fs [[y, fcx] | y <- [pred fcy], y >= '1',  y <= '8', [y, fcx] /= fc]) ++
+   allowedFieldsW = (emptyFields fs [[y, fcx] | y <- [pred fcy], y >= '1',  y <= '8', [y, fcx] /= fc]) ++
                     (opponentsPiece fs [[y, x] | y <- [pred fcy], x <- [succ fcx], y <= '8', y >= '1', x <= 'h', x >= 'a', [y, x] /= fc] k) ++
-                    (opponentsPiece fs [[y, x] | y <- [pred fcy], x <- [pred fcx], y <= '8', y >= '1', x <= 'h', x >= 'a', [y, x] /= fc] k)
-   allowedFieldsB = (emptyField fs [[y, fcx] | y <- [succ fcy], y <= '8', y >= '1', [y, fcx] /= fc]) ++
+                    (opponentsPiece fs [[y, x] | y <- [pred fcy], x <- [pred fcx], y <= '8', y >= '1', x <= 'h', x >= 'a', [y, x] /= fc] k) ++
+                    (emptyFields fs $ allowDoubleMove [[y, fcx] | y <- [pred(pred fcy)], y <= '8', y >= '1', [y, fcx] /= fc] fcy k)
+   allowedFieldsB = (emptyFields fs [[y, fcx] | y <- [succ fcy], y <= '8', y >= '1', [y, fcx] /= fc]) ++
                     (opponentsPiece fs [[y, x] | y <- [succ fcy], x <- [succ fcx], y >= '1', y <= '8', x <= 'h', x >= 'a', [y, x] /= fc] k) ++
-                    (opponentsPiece fs [[y, x] | y <- [succ fcy], x <- [pred fcx], y >= '1', y <= '8', x <= 'h', x >= 'a', [y, x] /= fc] k)
+                    (opponentsPiece fs [[y, x] | y <- [succ fcy], x <- [pred fcx], y >= '1', y <= '8', x <= 'h', x >= 'a', [y, x] /= fc] k) ++
+                    (emptyFields fs $ allowDoubleMove [[y, fcx] | y <- [succ(succ fcy)], y <= '8', y >= '1', [y, fcx] /= fc] fcy k)
 
 
 -- | [@emptyPath@] Out of a list of legal moves' coordinates, creates a path of unoccupied coordines,
@@ -129,7 +132,7 @@ pawnChecker b@(Board fs) fc@[fcy,fcx] sc k =
 -- >>> emptyPath ["6b", "6c", "6d", "6e", "6f"]
 -- ["6b", "6c", "6d"]
 emptyPath :: [Field] -> [[Char]] -> [[Char]] -> [[Char]]
-emptyPath fs [] new = new
+emptyPath _ [] new = new
 emptyPath fs (c:cs) new =
  if (whatPiece fs c) /= (Piece NoColor NoType) then (c : new) else emptyPath fs cs (c : new)
   where
@@ -140,7 +143,7 @@ emptyPath fs (c:cs) new =
 --
 -- Used by Pawn Piece type.
 opponentsPiece :: [Field] -> [[Char]] -> PColor -> [[Char]]
-opponentsPiece fs [] k = []
+opponentsPiece _ [] _ = []
 opponentsPiece fs (c:cs) k =
   if colorof (whatPiece fs c) == (otherPlayer k) then (c:cs) else cs
 
@@ -148,7 +151,18 @@ opponentsPiece fs (c:cs) k =
 -- checks if coordinates can exist as legal, by being unoccupied.
 --
 -- Used by Pawn Piece type.
-emptyField :: [Field] -> [[Char]] -> [[Char]]
-emptyField fs [] = []
-emptyField fs (c:[]) =
-  if (whatPiece fs c) == (Piece NoColor NoType) then (c:[]) else []
+emptyFields :: [Field] -> [[Char]] -> [[Char]]
+emptyFields _ [] = []
+emptyFields fs (c:cs) =
+  if (whatPiece fs c) == (Piece NoColor NoType) then (c:cs) else cs
+
+-- | [@allowDoubleMove@] Returns list of coordinates if the pawn Piece
+-- stands on a starting position.
+--
+-- Used by Pawn Piece type.
+allowDoubleMove :: [[Char]] -> Char -> PColor -> [[Char]]
+allowDoubleMove [] _ _ = []
+allowDoubleMove cs fcy k
+ | fcy == '7' && k == White = cs
+ | fcy == '2' && k == Black = cs
+ | otherwise = []

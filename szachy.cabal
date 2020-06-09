@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4a3c230ab9a00c514edd1d0a489a2afd1c28aeabb75742565a4e607ba9da1c23
+-- hash: b1696e1f0bdaafaae13de3b79458f32965ddbd51d3837bde463da12af8fa1686
 
 name:           szachy
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
   exposed-modules:
       Board
       Checker
+      MateChecker
   other-modules:
       Paths_szachy
   hs-source-dirs:

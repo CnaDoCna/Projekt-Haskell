@@ -1,15 +1,19 @@
+C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\src\MateChecker.hs:
+  hash: f801c5468b22c19f3f3d78ea83d1b5acfc7e4349bea5aa2e15380886fbdf5349
+  size: 673
+  modtime: 1591725782
 C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\package.yaml:
   hash: 159f98716f7df2b50b70e97cdf41dfaa072d7df63905657ad4503f5837f3de2f
   size: 1234
   modtime: 1591032035
 C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\szachy.cabal:
-  hash: 6b0df5d5fb7e257e94c857341cec73562f20e5499846f40787f799f71d218d21
-  size: 1580
-  modtime: 1591648178
+  hash: eed4c971c58cccc7d81c5cabe7de9026b1c42d5afe0bfaa1c82ddacec2eba5b2
+  size: 1598
+  modtime: 1591724981
 C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\src\Board.hs:
-  hash: 1db94c3434da44f061c94067a065d606e4e8c8e651cb772a47a1fcfaa0b4d230
-  size: 5517
-  modtime: 1591648186
+  hash: 0d493ec7b5eff2af292dacfb8eb82a8f593ea9ea01ee612e30352044fbd158d9
+  size: 5515
+  modtime: 1591720620
 C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\README.md:
   hash: 1e4bffbb47f965f4ce8341a04d735a98e97506b119de53a06c71f5f05bc0a421
   size: 10
@@ -19,6 +23,6 @@ C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\ChangeLog.md:
   size: 49
   modtime: 1591032035
 C:\Users\zuza9\Documents\GitHub\Projekt-Haskell\src\Checker.hs:
-  hash: 6ab0dec3d8fccec9f4cf70ff4239ab562e9e6133f5eeba0218d327c3a3263943
-  size: 7411
-  modtime: 1591625792
+  hash: 05760c345188b1734beef0008dc2578beeb2a3205e50dea12e2156b7c93fe046
+  size: 8052
+  modtime: 1591725767
