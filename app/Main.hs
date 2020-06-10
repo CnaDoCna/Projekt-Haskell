@@ -41,16 +41,16 @@ move board@(Board fs) player = do
            boardNew = updateFields board newFstField newSndField
 
        if sndPiece == Piece (otherPlayer player) King
-           then do
-             putStrLn ("\n\nCHECKMATE\n\n" ++ (show player) ++ " pieces' won!")
-             return()
+           then
+             putStrLn ("\n\nCHECKMATE!\n\n" ++ (show player) ++ " pieces' won!")
 
-       else if sndPiece /= Piece NoColor NoType
-             then putStrLn ("\n\nMove successful!\n " ++
-                  (show $ colorof fstPiece) ++ " " ++ (show $ typeof fstPiece) ++ " captures " ++ (show $ colorof sndPiece) ++ " " ++ (show $ typeof sndPiece) ++ "!\n")
+       else do
+            if sndPiece /= Piece NoColor NoType
+               then putStrLn ("\n\nMove successful!\n " ++
+                    (show $ colorof fstPiece) ++ " " ++ (show $ typeof fstPiece) ++ " captures " ++ (show $ colorof sndPiece) ++ " " ++ (show $ typeof sndPiece) ++ "!\n")
 
             else if checkMate boardNew sndPosition fstPiece == True
                    then putStrLn ("\n\n" ++ (show $ otherPlayer player) ++ " King is IN CHECK!\n\n")
                 else putStrLn ("\n\nMove successful!\n")
 
-        move boardNew (otherPlayer player)
+            move boardNew (otherPlayer player)

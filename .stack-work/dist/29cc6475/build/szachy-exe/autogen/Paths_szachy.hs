@@ -29,12 +29,12 @@ version :: Version
 version = Version [0,1,0,0] []
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 
-bindir     = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\7387269c\\bin"
-libdir     = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\7387269c\\lib\\x86_64-windows-ghc-8.8.3\\szachy-0.1.0.0-KmlFkKArhmPK4fIARHqVUi-szachy-exe"
-dynlibdir  = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\7387269c\\lib\\x86_64-windows-ghc-8.8.3"
-datadir    = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\7387269c\\share\\x86_64-windows-ghc-8.8.3\\szachy-0.1.0.0"
-libexecdir = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\7387269c\\libexec\\x86_64-windows-ghc-8.8.3\\szachy-0.1.0.0"
-sysconfdir = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\7387269c\\etc"
+bindir     = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\185f70f2\\bin"
+libdir     = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\185f70f2\\lib\\x86_64-windows-ghc-8.8.3\\szachy-0.1.0.0-KmlFkKArhmPK4fIARHqVUi-szachy-exe"
+dynlibdir  = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\185f70f2\\lib\\x86_64-windows-ghc-8.8.3"
+datadir    = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\185f70f2\\share\\x86_64-windows-ghc-8.8.3\\szachy-0.1.0.0"
+libexecdir = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\185f70f2\\libexec\\x86_64-windows-ghc-8.8.3\\szachy-0.1.0.0"
+sysconfdir = "C:\\Users\\zuza9\\Documents\\GitHub\\Projekt-Haskell\\.stack-work\\install\\185f70f2\\etc"
 
 getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: IO FilePath
 getBinDir = catchIO (getEnv "szachy_bindir") (\_ -> return bindir)

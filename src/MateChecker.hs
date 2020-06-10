@@ -1,3 +1,15 @@
+{-|
+Module      : MateChecker
+Description : Implements search for opponents' King to put in check.
+Copyright   : (c) Zuzanna Boruczkowska, 2020
+              Marta Koczerska, 2020
+              Małgorzata Orłowska, 2020
+License      : GPL-3
+Maintainer   : zuzbor5@st.amu.edu.pl
+Stability    : stable
+Portability  : POSTX
+-}
+
 module MateChecker
     (checkMate
     , opponentKing
