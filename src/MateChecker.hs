@@ -18,17 +18,17 @@ module MateChecker
 import Board
 import Checker
 
-checkMate b@(Board fs) c p@(Piece k t) =
+checkMate b@(Board fs) c p@(Piece o t) =
   case t of
-     King -> kingChecker b c (opponentKing fs k)
-     Queen -> queenChecker b c (opponentKing fs k)
-     Rook -> rookChecker b c (opponentKing fs k)
-     Bishop -> bishopChecker b c (opponentKing fs k)
-     Knight -> knightChecker b c (opponentKing fs k)
-     Pawn -> pawnChecker b c (opponentKing fs k) k
+     King -> kingChecker b c (opponentKing fs o)
+     Queen -> queenChecker b c (opponentKing fs o)
+     Rook -> rookChecker b c (opponentKing fs o)
+     Bishop -> bishopChecker b c (opponentKing fs o)
+     Knight -> knightChecker b c (opponentKing fs o)
+     Pawn -> pawnChecker b c (opponentKing fs o) o
      _ -> False
 
 opponentKing :: [Field] -> PColor -> [Char]
-opponentKing (f:fs) k
-  | typeof (piece f) == King && colorof (piece f) == (otherPlayer k) = coords f
-  | otherwise = opponentKing fs k
+opponentKing (f:fs) o
+  | typeof (piece f) == King && colorof (piece f) == (otherPlayer o) = coords f
+  | otherwise = opponentKing fs o

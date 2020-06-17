@@ -108,25 +108,26 @@ knightChecker b@(Board fs) fc@[fcy,fcx] sc
 
 
 pawnChecker :: Board -> [Char] -> [Char] -> PColor -> Bool
-pawnChecker b@(Board fs) fc@[fcy,fcx] sc k =
- case k of
+pawnChecker b@(Board fs) fc@[fcy,fcx] sc o =
+ case o of
    White -> if sc `elem` allowedFieldsW then True else False
    Black -> if sc `elem` allowedFieldsB then True else False
    _ -> False
  where
-   allowedFieldsW = (emptyFields fs [[y, fcx] | y <- [pred fcy], y >= '1',  y <= '8', [y, fcx] /= fc]) ++
-                    (opponentsPiece fs [[y, x] | y <- [pred fcy], x <- [succ fcx], y <= '8', y >= '1', x <= 'h', x >= 'a', [y, x] /= fc] k) ++
-                    (opponentsPiece fs [[y, x] | y <- [pred fcy], x <- [pred fcx], y <= '8', y >= '1', x <= 'h', x >= 'a', [y, x] /= fc] k) ++
-                    (emptyFields fs $ allowDoubleMove [[y, fcx] | y <- [pred(pred fcy)], y <= '8', y >= '1', [y, fcx] /= fc] fcy k)
-   allowedFieldsB = (emptyFields fs [[y, fcx] | y <- [succ fcy], y <= '8', y >= '1', [y, fcx] /= fc]) ++
-                    (opponentsPiece fs [[y, x] | y <- [succ fcy], x <- [succ fcx], y >= '1', y <= '8', x <= 'h', x >= 'a', [y, x] /= fc] k) ++
-                    (opponentsPiece fs [[y, x] | y <- [succ fcy], x <- [pred fcx], y >= '1', y <= '8', x <= 'h', x >= 'a', [y, x] /= fc] k) ++
-                    (emptyFields fs $ allowDoubleMove [[y, fcx] | y <- [succ(succ fcy)], y <= '8', y >= '1', [y, fcx] /= fc] fcy k)
+   allowedFieldsW = (emptyFields fs [[y, fcx] | y <- [pred fcy], y >= '1',  y <= '8', [y, fcx] /= fc] [[]]) ++
+                    (opponentsPiece fs [[y, x] | y <- [pred fcy], x <- [succ fcx], y <= '8', y >= '1', x <= 'h', x >= 'a', [y, x] /= fc] o) ++
+                    (opponentsPiece fs [[y, x] | y <- [pred fcy], x <- [pred fcx], y <= '8', y >= '1', x <= 'h', x >= 'a', [y, x] /= fc] o) ++
+                    (emptyFields fs (allowDoubleMove [[y, fcx] | y <- [pred fcy, pred(pred fcy)], y <= '8', y >= '1', [y, fcx] /= fc] fcy o) [[]])
+   allowedFieldsB = (emptyFields fs [[y, fcx] | y <- [succ fcy], y <= '8', y >= '1', [y, fcx] /= fc] [[]]) ++
+                    (opponentsPiece fs [[y, x] | y <- [succ fcy], x <- [succ fcx], y >= '1', y <= '8', x <= 'h', x >= 'a', [y, x] /= fc] o) ++
+                    (opponentsPiece fs [[y, x] | y <- [succ fcy], x <- [pred fcx], y >= '1', y <= '8', x <= 'h', x >= 'a', [y, x] /= fc] o) ++
+                    (emptyFields fs (allowDoubleMove [[y, fcx] | y <- [succ fcy, succ(succ fcy)], y <= '8', y >= '1', [y, fcx] /= fc] fcy o) [[]])
 
 
 -- | [@emptyPath@] Out of a list of legal moves' coordinates, creates a path of unoccupied coordines,
 -- starting from the starting coordinate to a first encountered occupied coordinate.
 -- Adds the coordinate to the list, as it can be occupied by a Piece to capture.
+--
 -- Used by Queen, Rook and Bishop Piece type.
 --
 -- >>> emptyPath ["6b", "6c", "6d", "6e", "6f"]
@@ -135,7 +136,8 @@ emptyPath :: [Field] -> [[Char]] -> [[Char]] -> [[Char]]
 emptyPath _ [] new = new
 emptyPath fs (c:cs) new =
  if (whatPiece fs c) /= (Piece NoColor NoType) then (c : new) else emptyPath fs cs (c : new)
-  where
+
+
 
 -- | [@opponentsPiece@] Out of a list of moves' coordinates,
 -- checks if coordinates can exist as legal,
@@ -144,17 +146,17 @@ emptyPath fs (c:cs) new =
 -- Used by Pawn Piece type.
 opponentsPiece :: [Field] -> [[Char]] -> PColor -> [[Char]]
 opponentsPiece _ [] _ = []
-opponentsPiece fs (c:cs) k =
-  if colorof (whatPiece fs c) == (otherPlayer k) then (c:cs) else cs
+opponentsPiece fs (c:cs) o =
+  if colorof (whatPiece fs c) == (otherPlayer o) then (c:cs) else cs
 
 -- | [@emptyField@] Out of a list of moves' coordinates,
 -- checks if coordinates can exist as legal, by being unoccupied.
 --
 -- Used by Pawn Piece type.
-emptyFields :: [Field] -> [[Char]] -> [[Char]]
-emptyFields _ [] = []
-emptyFields fs (c:cs) =
-  if (whatPiece fs c) == (Piece NoColor NoType) then (c:cs) else cs
+emptyFields :: [Field] -> [[Char]] -> [[Char]] -> [[Char]]
+emptyFields _ [] new = new
+emptyFields fs (c:cs) new =
+  if (whatPiece fs c) /= (Piece NoColor NoType) then new else emptyFields fs cs (c : new)
 
 -- | [@allowDoubleMove@] Returns list of coordinates if the pawn Piece
 -- stands on a starting position.
@@ -162,7 +164,7 @@ emptyFields fs (c:cs) =
 -- Used by Pawn Piece type.
 allowDoubleMove :: [[Char]] -> Char -> PColor -> [[Char]]
 allowDoubleMove [] _ _ = []
-allowDoubleMove cs fcy k
- | fcy == '7' && k == White = cs
- | fcy == '2' && k == Black = cs
+allowDoubleMove cs fcy o
+ | fcy == '7' && o == White = cs
+ | fcy == '2' && o == Black = cs
  | otherwise = []
